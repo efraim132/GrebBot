@@ -17,8 +17,21 @@ intents.message_content = True  # Required for reading message content
 intents.presences = True  # Required for presence updates
 intents.members = True  # Required for member updates
 
+# Banner
+VERSION = os.getenv('VERSION', 'ERROR')  # Get version from environment variable
+print(text2art(F"GrebBot - Discord Bot \nv{VERSION}"))
+print("Starting GrebBot...")
+
+
+
 # Create bot instance with command prefix
-bot = commands.Bot(command_prefix='$', intents=intents)
+if DEBUG_MODE:
+    print("⚠️ DEBUG MODE is ON ⚠️")
+    command_prefix = '$'
+else:
+    command_prefix = '1'
+
+bot = commands.Bot(command_prefix=command_prefix, intents=intents)
 
 @bot.event
 async def on_ready():
@@ -93,11 +106,6 @@ async def load_cogs():
 # Run the bot
 async def main():
     """Main function to start the bot"""
-
-    # Banner
-    VERSION = os.getenv('VERSION', 'ERROR')  # Get version from environment variable
-    print(text2art(F"GrebBot - Discord Bot \nv{VERSION}"))
-    print("Starting GrebBot...")
 
 
     # Load cogs first

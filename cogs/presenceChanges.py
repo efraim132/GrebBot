@@ -11,7 +11,7 @@ class PresenceChanges(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    def check_if_sea_of_thieves(self, activity_name: Optional[str] = None):
+    def check_if_sea_of_thieves(activity_name: Optional[str] = None):
         """Check if the activity is Sea of Thieves"""
         if not activity_name:
             return False
@@ -26,7 +26,24 @@ class PresenceChanges(commands.Cog):
             return True
         return False
 
+    async def check_sea_of_thieves_activity(self, before, after):
+        """Check for Sea of Thieves activity changes and notify subscribers"""
+        before_activity = before.activity.name if before.activity else None
+        after_activity = after.activity.name if after.activity else None
 
+        # Only check if Sea of Thieves started (removed stop notifications)
+        if (not self.check_if_sea_of_thieves(before_activity) and
+                self.check_if_sea_of_thieves(after_activity)):
+
+            # Get subscription manager and notify
+            subscription_manager = self.bot.get_cog('SubscriptionManager')
+            if subscription_manager:
+                await subscription_manager.notify_sea_of_thieves_activity(after, "start")
+
+    async def on_tracked_game_activity(self, member, activity_name: str, activity_type: str):
+        """Check if the activity is a tracked game"""
+        if self.check_if_sea_of_thieves(activity_name):
+            print(f"🏴‍☠️ {member.name} {activity_type}ed Sea of Thieves!")
 
 
     @commands.Cog.listener()
@@ -60,24 +77,7 @@ class PresenceChanges(commands.Cog):
 
                     
 
-    async def check_sea_of_thieves_activity(self, before, after):
-        """Check for Sea of Thieves activity changes and notify subscribers"""
-        before_activity = before.activity.name if before.activity else None
-        after_activity = after.activity.name if after.activity else None
-        
-        # Only check if Sea of Thieves started (removed stop notifications)
-        if (not self.check_if_sea_of_thieves(before_activity) and 
-            self.check_if_sea_of_thieves(after_activity)):
-            
-            # Get subscription manager and notify
-            subscription_manager = self.bot.get_cog('SubscriptionManager')
-            if subscription_manager:
-                await subscription_manager.notify_sea_of_thieves_activity(after, "start")
 
-    async def on_tracked_game_activity(self, member, activity_name: str, activity_type: str):
-        """Check if the activity is a tracked game"""
-        if self.check_if_sea_of_thieves(activity_name):
-            print(f"🏴‍☠️ {member.name} {activity_type}ed Sea of Thieves!")
 
 
 

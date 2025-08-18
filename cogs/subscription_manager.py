@@ -453,7 +453,7 @@ class SubscriptionManager(commands.Cog):
         """Check your DM subscription status - works in servers or DMs"""
         user_id = ctx.author.id
         
-        # If used in DMs, show all subscriptions across all servers
+        # If used in DMs, show all subscriptions across all servers (DM Logic)
         if ctx.guild is None:
             # Get all DM subscriptions for this user
             user_subscriptions = await self.get_all_dm_subscriptions_for_user(user_id)

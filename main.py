@@ -29,7 +29,7 @@ if DEBUG_MODE:
     print("⚠️ DEBUG MODE is ON ⚠️")
     command_prefix = '$'
 else:
-    command_prefix = '1'
+    command_prefix = '!'
 
 bot = commands.Bot(command_prefix=command_prefix, intents=intents)
 

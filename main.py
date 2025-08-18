@@ -18,7 +18,7 @@ intents.presences = True  # Required for presence updates
 intents.members = True  # Required for member updates
 
 # Create bot instance with command prefix
-bot = commands.Bot(command_prefix='!', intents=intents)
+bot = commands.Bot(command_prefix='$', intents=intents)
 
 @bot.event
 async def on_ready():

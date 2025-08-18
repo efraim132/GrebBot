@@ -5,26 +5,38 @@ A Discord bot designed to track Sea of Thieves gaming activity and provide serve
 ## Features
 
 ### Sea of Thieves Activity Tracking
+
 - Monitors when members start playing Sea of Thieves
 - Sends notifications to subscribed Discord channels
 - Anti-spam protection with 2-minute cooldown per member per server
 - MongoDB database for persistent subscription storage
+- Individual DM notifications for users who want personal alerts
 
 ### Basic Commands
+
 - `!hello` - Greets the user
 - `!ping` - Shows bot latency
 - `!info` - Displays bot information
 - `!say <message>` - Makes the bot repeat a message
 - `!echo <message>` - Echoes the message back
+- `!help_commands` - Shows all available commands
 
-### Subscription Management
+### Subscription Management (Admin Only)
+
 - `!subscribe [#channel]` - Subscribe server to Sea of Thieves notifications
 - `!unsubscribe` - Disable notifications for the server
 - `!subscription_status` - Check current subscription status
 - `!cooldown_status [@member]` - Check cooldown status for members
 - `!reset_cooldown @member` - Reset cooldown for a specific member
 
+### DM Subscriptions (Any User)
+
+- `!dm_subscribe` - Subscribe to receive DMs when notifications are sent in the current server
+- `!dm_unsubscribe` - Unsubscribe from DMs for the current server
+- `!dm_status` - Check your DM subscription status for the current server
+
 ### Advanced Commands
+
 - `!serverinfo` - Shows detailed server information
 
 ## Requirements
@@ -37,11 +49,13 @@ A Discord bot designed to track Sea of Thieves gaming activity and provide serve
 
 1. Clone the repository
 2. Install dependencies:
+
    ```
    pip install -r requirements.txt
    ```
 
 3. Create a `.env` file with the following variables:
+
    ```
    DISCORD_TOKEN=your_discord_bot_token
    MONGODB_URL=mongodb://localhost:27017
@@ -52,12 +66,14 @@ A Discord bot designed to track Sea of Thieves gaming activity and provide serve
 
 4. Set up MongoDB:
    - Install MongoDB locally or use MongoDB Atlas
-   - The bot will create a database named `grebbot_db`
+   - The bot will create a database named `grebbot_db_test`
    - Subscription data is stored in the `sea_of_thieves_subscriptions` collection
+   - DM subscription data is stored in the `dm_subscriptions` collection
 
 ## Usage
 
 1. Invite the bot to your Discord server with the following permissions:
+
    - Send Messages
    - Read Messages/View Channels
    - Read Message History
@@ -82,6 +98,7 @@ Ensure your `.env` file is properly configured for your Docker environment.
 ## Database Schema
 
 ### Subscriptions Collection
+
 ```json
 {
   "guild_id": "string",
@@ -90,6 +107,18 @@ Ensure your `.env` file is properly configured for your Docker environment.
   "channel_name": "string",
   "enabled": "boolean",
   "notify_start": "boolean"
+}
+```
+
+### DM Subscriptions Collection
+
+```json
+{
+  "user_id": "number",
+  "guild_id": "string",
+  "enabled": "boolean",
+  "created_at": "datetime",
+  "updated_at": "datetime"
 }
 ```
 

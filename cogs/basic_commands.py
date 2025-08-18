@@ -47,6 +47,58 @@ class BasicCommands(commands.Cog):
         """Command: !echo <message> - Echoes the message back"""
         await ctx.send(f'You said: {message}')
 
+    @commands.command(name='help_commands')
+    async def help_commands(self, ctx):
+        """Command: !help_commands - Shows all available commands"""
+        embed = discord.Embed(
+            title="🤖 GrebBot Commands",
+            description="Here are all the available commands:",
+            color=discord.Color.blue()
+        )
+        
+        # Basic Commands
+        embed.add_field(
+            name="📝 Basic Commands",
+            value="`!hello` - Greet the bot\n"
+                  "`!ping` - Check bot latency\n"
+                  "`!info` - Show bot information\n"
+                  "`!say <message>` - Make the bot say something\n"
+                  "`!echo <message>` - Echo a message back\n"
+                  "`!help_commands` - Show this help menu",
+            inline=False
+        )
+        
+        # Admin Commands
+        embed.add_field(
+            name="🛡️ Admin Commands (Manage Server)",
+            value="`!subscribe [#channel]` - Subscribe to Sea of Thieves notifications\n"
+                  "`!unsubscribe` - Unsubscribe from notifications\n"
+                  "`!subscription_status` - Check subscription status\n"
+                  "`!cooldown_status [member]` - Check cooldown status\n"
+                  "`!reset_cooldown <member>` - Reset member cooldown",
+            inline=False
+        )
+        
+        # DM Commands
+        embed.add_field(
+            name="📬 DM Commands (Any User)",
+            value="`!dm_subscribe` - Get DMs when notifications are sent in this server\n"
+                  "`!dm_unsubscribe` - Stop getting DMs for this server\n"
+                  "`!dm_status` - Check your DM subscription status",
+            inline=False
+        )
+        
+        # Advanced Commands
+        embed.add_field(
+            name="⚙️ Advanced Commands (Manage Server)",
+            value="`!serverinfo` - Show detailed server information",
+            inline=False
+        )
+        
+        embed.set_footer(text="🏴‍☠️ GrebBot automatically detects when you start playing Sea of Thieves!")
+        
+        await ctx.send(embed=embed)
+
 # Setup function to add the cog to the bot
 async def setup(bot):
     await bot.add_cog(BasicCommands(bot))

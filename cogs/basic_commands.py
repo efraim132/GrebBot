@@ -1,6 +1,8 @@
 import discord
 from discord.ext import commands
 
+
+
 class BasicCommands(commands.Cog):
     """Basic bot commands like hello, ping, info, etc."""
     

@@ -4,6 +4,8 @@ import os
 import asyncio
 from dotenv import load_dotenv
 from art import text2art
+import threading
+from web_interface import BotWebInterface, run_web_interface
 
 # Load environment variables from .env file
 load_dotenv()
@@ -33,9 +35,17 @@ else:
 
 bot = commands.Bot(command_prefix=command_prefix, intents=intents)
 
+# Initialize web interface
+web_interface = None
+
 @bot.event
 async def on_ready():
     """Event triggered when bot is ready"""
+    global web_interface
+
+    # Initialize web interface with bot instance
+    web_interface = BotWebInterface(bot)
+    web_interface.add_log(f"Bot {bot.user} has logged in!", "INFO")
 
     status = os.getenv('bot_status', 'playing with <code>')
 
@@ -48,6 +58,7 @@ async def on_ready():
         status=discord.Status.online
     )
     print(f'Status set to: {status}')
+    web_interface.add_log(f"Status set to: {status}", "INFO")
 
 @bot.event
 async def on_message(message):
@@ -76,12 +87,20 @@ async def on_message(message):
 @bot.event
 async def on_command_error(ctx, error):
     """Handle command errors"""
+    global web_interface
+
     if isinstance(error, commands.CommandNotFound):
         await ctx.send(f"Command not found! Use `!help` to see available commands.")
+        if web_interface:
+            web_interface.add_log(f"Command not found: {ctx.message.content}", "WARNING")
     elif isinstance(error, commands.MissingRequiredArgument):
         await ctx.send(f"Missing required argument! Check the command usage with `!help <command>`")
+        if web_interface:
+            web_interface.add_log(f"Missing argument for command: {ctx.command.name}", "WARNING")
     else:
         print(f"An error occurred: {error}")
+        if web_interface:
+            web_interface.add_log(f"Error: {str(error)}", "ERROR")
         if (isinstance(error, commands.errors.CommandInvokeError) and DEBUG_MODE):
             await ctx.send("I don't have permission to delete the command message :(")
         else:
@@ -127,4 +146,9 @@ async def main():
         print(f"Error starting bot: {e}")
 
 if __name__ == "__main__":
+    # Start the web interface in a separate thread
+    web_thread = threading.Thread(target=run_web_interface, daemon=True)
+    web_thread.start()
+
+    # Run the bot
     asyncio.run(main())

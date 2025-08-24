@@ -14,7 +14,7 @@ function MainEditorMenu() {
                 padding: 'var(--stack-padding-spacious)',
             }}
         >
-            <Heading className="mb-2" as="h2">
+            <Heading sx={{mb: 2}} as="h2">
                 <MarkGithubIcon size={64}/> GrebBot Controls
             </Heading>
             <Stack direction="vertical">

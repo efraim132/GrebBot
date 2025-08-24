@@ -1,5 +1,6 @@
 import {Box, Button, Heading} from "@primer/react";
 import DiscordIcon from "./DiscordIcon.tsx";
+import {AlertIcon} from "@primer/octicons-react";
 
 interface Props {
     toggleBannerFunction: () => void;
@@ -27,7 +28,7 @@ function WarningBanner({toggleBannerFunction}: Props) {
               bot configuration
           </Box>
           <Box sx={{display: 'flex', justifyContent: 'center'}}>
-              <Button onClick={toggleBannerFunction} variant="danger">Proceed</Button>
+              <Button trailingVisual={AlertIcon } onClick={toggleBannerFunction} variant="danger">Proceed</Button>
           </Box>
       </Box>
   );

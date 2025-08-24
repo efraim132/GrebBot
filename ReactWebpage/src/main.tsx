@@ -4,6 +4,7 @@ import App from './App.tsx'
 
 // pick a theme (light shown here)
 import '@primer/primitives/dist/css/functional/themes/light.css'
+import '@primer/primitives/dist/css/primitives.css'
 
 import {ThemeProvider, BaseStyles} from '@primer/react'
 

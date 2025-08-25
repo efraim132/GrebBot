@@ -5,7 +5,7 @@ import asyncio
 from dotenv import load_dotenv
 from art import text2art
 import threading
-from web_interface import BotWebInterface, run_web_interface
+from web_interface import run_web_interface
 
 # Load environment variables from .env file
 load_dotenv()
@@ -44,8 +44,7 @@ async def on_ready():
     global web_interface
 
     # Initialize web interface with bot instance
-    web_interface = BotWebInterface(bot)
-    web_interface.add_log(f"Bot {bot.user} has logged in!", "INFO")
+
 
     status = os.getenv('bot_status', 'playing with <code>')
 

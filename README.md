@@ -84,6 +84,10 @@ A Discord bot designed to track Sea of Thieves gaming activity and provide serve
 
 3. When members start playing Sea of Thieves, the bot will send notifications to the subscribed channel
 
+## Web interface
+
+This bot has a running web interface that can be used to administrate the functions of this bot. Simply address the IP address of where the bot is running and you can use the bot this way.
+
 ## Docker
 
 The bot can be run in a Docker container:

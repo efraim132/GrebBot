@@ -14,13 +14,13 @@ function MainEditorMenu() {
                 <EditorHeader/>
             </PageLayout.Header>
             <PageLayout.Pane resizable position="start" aria-label="Side pane">
-                <Placeholder height={320} label="Pane"/>
+                <Placeholder height={320}>Pane</Placeholder>
             </PageLayout.Pane>
             <PageLayout.Content>
-                <Placeholder height={640} label="Content"/>
+                <Placeholder height={640}>Content</Placeholder>
             </PageLayout.Content>
             <PageLayout.Footer>
-                <Placeholder height={64} label="Footer"/>
+                <Placeholder height={64} >Footer </Placeholder>
             </PageLayout.Footer>
         </PageLayout></Box>
 

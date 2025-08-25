@@ -1,10 +1,12 @@
-import discord
-from discord.ext import commands
-import os
 import asyncio
-from dotenv import load_dotenv
-from art import text2art
+import os
 import threading
+
+import discord
+from art import text2art
+from discord.ext import commands
+from dotenv import load_dotenv
+
 from web_interface import run_web_interface
 
 # Load environment variables from .env file
@@ -24,8 +26,6 @@ VERSION = os.getenv('VERSION', 'ERROR')  # Get version from environment variable
 print(text2art(F"GrebBot - Discord Bot \nv{VERSION}"))
 print("Starting GrebBot...")
 
-
-
 # Create bot instance with command prefix
 if DEBUG_MODE:
     print("⚠️ DEBUG MODE is ON ⚠️")
@@ -38,6 +38,7 @@ bot = commands.Bot(command_prefix=command_prefix, intents=intents)
 # Initialize web interface
 web_interface = None
 
+
 @bot.event
 async def on_ready():
     """Event triggered when bot is ready"""
@@ -45,19 +46,18 @@ async def on_ready():
 
     # Initialize web interface with bot instance
 
-
     status = os.getenv('bot_status', 'playing with <code>')
 
     print(f'{bot.user} has logged in!')
     print(f'Bot ID: {bot.user.id}')
-    
+
     # Set bot status
     await bot.change_presence(
         activity=discord.Game(name=status),
         status=discord.Status.online
     )
     print(f'Status set to: {status}')
-    web_interface.add_log(f"Status set to: {status}", "INFO")
+
 
 @bot.event
 async def on_message(message):
@@ -65,22 +65,23 @@ async def on_message(message):
     # Ignore messages from the bot itself
     if message.author == bot.user:
         return
-    
+
     # Log all messages (optional - remove if not needed)
     print(f'Message from [{message.author}: {message.content}]', end=' ')
-    if message.guild  and DEBUG_MODE:
+    if message.guild and DEBUG_MODE:
         print(f"Channel: {message.channel.name} | Guild: {message.guild.name}")
     elif DEBUG_MODE:
         print(f"Direct Message from {message.author}")
-    
+
     # Respond to specific non-command messages
     if message.content.lower() == 'hello':
         await message.channel.send(f'Hello {message.author.mention}!')
     elif message.content.lower() == 'ping':
         await message.channel.send('Pong!')
-    
+
     # Process commands (important: this must be at the end)
     await bot.process_commands(message)
+
 
 # Error handling
 @bot.event
@@ -90,16 +91,10 @@ async def on_command_error(ctx, error):
 
     if isinstance(error, commands.CommandNotFound):
         await ctx.send(f"Command not found! Use `!help` to see available commands.")
-        if web_interface:
-            web_interface.add_log(f"Command not found: {ctx.message.content}", "WARNING")
     elif isinstance(error, commands.MissingRequiredArgument):
         await ctx.send(f"Missing required argument! Check the command usage with `!help <command>`")
-        if web_interface:
-            web_interface.add_log(f"Missing argument for command: {ctx.command.name}", "WARNING")
     else:
         print(f"An error occurred: {error}")
-        if web_interface:
-            web_interface.add_log(f"Error: {str(error)}", "ERROR")
         if (isinstance(error, commands.errors.CommandInvokeError) and DEBUG_MODE):
             await ctx.send("I don't have permission to delete the command message :(")
         else:
@@ -119,24 +114,21 @@ async def load_cogs():
         print(f"❌ Failed to load cogs: {e}")
 
 
-
-
 # Run the bot
 async def main():
     """Main function to start the bot"""
 
-
     # Load cogs first
     await load_cogs()
-    
+
     # Get token from environment variables
     token = os.getenv('DISCORD_TOKEN')
-    
+
     if not token:
         print("Error: DISCORD_TOKEN not found in .env file!")
         print("Please add your Discord bot token to the .env file.")
         return
-    
+
     try:
         await bot.start(token)
     except discord.LoginFailure:
@@ -144,8 +136,10 @@ async def main():
     except Exception as e:
         print(f"Error starting bot: {e}")
 
+
 if __name__ == "__main__":
     # Start the web interface in a separate thread
+    print("Standby - Starting Webserver Thread")  # Webserver Started Message is sent from webserver itself
     web_thread = threading.Thread(target=run_web_interface, daemon=True)
     web_thread.start()
 

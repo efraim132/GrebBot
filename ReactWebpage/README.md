@@ -1,69 +1,68 @@
-# React + TypeScript + Vite
+# Admin Webpage (React + TypeScript + Vite)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the admin UI for the GrebBot project. It’s a TypeScript React app built with Vite, styled with GitHub’s Primer components, and served by the bot’s Flask web server.
 
-Currently, two official plugins are available:
+- Tech: React + TypeScript + Vite
+- UI: Primer React + Primer Primitives
+- Backend host: Flask (see web_interface.py at the repo root)
+- Output target: templates/ (consumed by Flask)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## How it’s wired
+- Build output: vite.config.ts sets `build.outDir = '../templates'`.
+  - Vite writes `index.html` to `../templates/index.html` and assets to `../templates/assets/`.
+- Flask serving:
+  - web_interface.py creates the app with `static_folder='templates/assets'` and serves `/` via `render_template('index.html')`.
+  - After a production build, the Flask server at http://127.0.0.1:5000 will serve the built admin UI.
 
-## Expanding the ESLint configuration
+## Quick start
+1) Install Node 18+ and npm.
+2) Install dependencies:
+   - cd ReactWebpage
+   - npm install
+3) Dev mode (Vite server):
+   - npm run dev
+   - Open http://localhost:5173
+4) Build for Flask (normal build):
+   - npm run build
+   - Output goes to `../templates` as configured; start the bot and visit http://127.0.0.1:5000
+5) Optional preview (static):
+   - npm run preview
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Notes
+- Don’t change `outDir` unless you also update Flask’s template/static config.
+- If you see old assets, remove the `templates/` folder and rebuild.
 
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Primer UI guidelines
+Primer is already set up for a clean, accessible UI:
+- `@primer/react` components are used throughout. Keep layout simple: PageLayout, Box, Button, ActionMenu, etc.
+- `main.tsx` includes `ThemeProvider` and `BaseStyles`, and imports Primer Primitives CSS for consistent tokens.
+- Prefer Primer components over custom CSS for spacing, typography, and color to keep the interface clean and consistent.
 
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
+Useful bits already in place
+- ThemeProvider + BaseStyles wrapper
+- Primer Primitives CSS imports
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Live updates with Flask-SocketIO (optional)
+For live/admin data, use Socket.IO with Flask where sensible.
+- Backend (Python): Flask-SocketIO is listed in requirements. Typical setup is to initialize SocketIO with the Flask app and use `socketio.run(app)` instead of `app.run()`.
+- Frontend (TypeScript): install `socket.io-client` and connect to the Flask server.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Minimal shape
+- Backend:
+  - Initialize: `from flask_socketio import SocketIO, emit; socketio = SocketIO(app, cors_allowed_origins='*')`
+  - Emit from server: `socketio.emit('event_name', payload)`
+  - Run: `socketio.run(app, host='127.0.0.1', port=5000)`
+- Frontend:
+  - `npm i socket.io-client`
+  - `import {io} from 'socket.io-client'; const socket = io('http://127.0.0.1:5000'); socket.on('event_name', handler)`
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Keep events small and structured (JSON). Reuse Flask where practical: auth, session, and routes live in Flask; SocketIO is only for data that must be real-time.
 
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+## Scripts
+- npm run dev — start Vite dev server
+- npm run build — type-check and build to `../templates`
+- npm run preview — preview built assets locally
+- npm run lint — run ESLint
+
+## Part of the larger project
+This app lives at `ReactWebpage/` but is part of the bot’s repo. The Flask server picks up production builds from `templates/`. Commit both sides together when you change UI behaviors that depend on backend data.

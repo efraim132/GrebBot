@@ -70,6 +70,11 @@ A Discord bot designed to track Sea of Thieves gaming activity and provide serve
    - Subscription data is stored in the `sea_of_thieves_subscriptions` collection
    - DM subscription data is stored in the `dm_subscriptions` collection
 
+4. *Optional*
+   - Build you're own react website
+   - When ready, `npm build` and it will automatically go to the `templates` folder
+   - run `main.py`
+
 ## Usage
 
 1. Invite the bot to your Discord server with the following permissions:

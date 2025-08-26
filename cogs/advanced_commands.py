@@ -4,6 +4,7 @@ import queue
 import threading
 from asyncio import as_completed
 from concurrent.futures import ThreadPoolExecutor
+from utils.decorators import devModeOnly
 
 import discord
 from discord.ext import commands
@@ -53,7 +54,7 @@ class AdvancedCommands(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
     
-    # Example advanced command - you can add your own here
+    #@devModeOnly
     @commands.command(name='serverinfo')
     async def server_info(self, ctx):
         """Command: !serverinfo - Shows detailed server information"""
@@ -77,7 +78,8 @@ class AdvancedCommands(commands.Cog):
             embed.set_thumbnail(url=guild.icon.url)
         
         await ctx.send(embed=embed)
-    
+
+    #@devModeOnly
     @commands.command(name='isPrime')
     async def is_prime(self, ctx, number: int):
         """Checks if the user input is a prime number"""

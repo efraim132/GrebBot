@@ -1,4 +1,7 @@
 import time
+import os
+import inspect
+import functools
 
 from discord.ext import commands
 
@@ -19,3 +22,20 @@ def timer(func):
         return result
 
     return wrapper
+
+
+def _is_dev_mode_enabled() -> bool:
+    """Return True if DEBUG_MODE is truthy in the environment."""
+    debugMode = os.getenv("DEBUG_MODE", "False")
+    return str(debugMode).lower() in ("1", "true", "yes", "on")
+
+#TODO Implement Dev mode only decorator
+async def devModeOnly(func):
+    async def wrapper(func):
+        if _is_dev_mode_enabled():
+            value = func()
+            return value
+        raise Exception("[ERROR] Currently not in dev mode.")
+
+    return wrapper
+
